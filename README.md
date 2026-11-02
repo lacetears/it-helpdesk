@@ -1,8 +1,14 @@
 # IT Help Desk
 
+[Live browser demo](https://lacetears.github.io/it-career-portfolio/helpdesk.html)
+
 A local ticket tracker for a support technician: capture a request, set its priority, assign an owner, and follow it through resolution.
 
 **Python · Flask · SQLite · HTML/CSS**
+
+![Published browser demo](docs/screenshot.jpg)
+
+*Screenshot of the published interactive demo.*
 
 ## Try it
 ```sh
