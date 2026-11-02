@@ -45,4 +45,4 @@ The suite covers the ticket lifecycle, notes, persistence, input validation, CSR
 ## Limits
 This application has no login, authorization, email delivery, or SLA engine. Run it on localhost; do not deploy it publicly as a help desk for real users. It has not been load-tested. All seeded tickets are fictional.
 
-[Implementation and AI-assistance notes](docs/development.md) · [Detailed setup](helpdesk/README.md)
+[Development notes](docs/development.md) · [Detailed setup](helpdesk/README.md)
