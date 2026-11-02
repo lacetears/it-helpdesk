@@ -1,0 +1,8 @@
+# Development notes
+
+
+## Validation
+Run the commands in the README. Tests exercise behavior rather than serving as evidence of production readiness. Fixtures and datasets are synthetic.
+
+## Working on this project
+Make changes in a branch, add a regression test for changed behavior, run the checks, and explain the change in a commit. Keep real credentials and customer data out of the repository.
