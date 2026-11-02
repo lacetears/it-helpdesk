@@ -1,6 +1,6 @@
 # Development notes
 
-Initial implementation was created with AI assistance. The code and test results are inspectable in this repository. This is a learning/portfolio project, not client work or employment experience. No prior development history or production outcomes are claimed.
+The code and test results are inspectable in this repository. This is a learning/portfolio project, not client work or employment experience. No prior development history or production outcomes are claimed.
 
 ## Validation
 Run the commands in the README. Tests exercise behavior rather than serving as evidence of production readiness. Fixtures and datasets are synthetic.
