@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block content %}<h1>{{ error.code }} · {{ error.name }}</h1><p>{{ error.description }}</p><p>Your request was not saved. Use your browser’s Back button to review the form.</p><a href="{{ url_for('index') }}">Return to queue</a>{% endblock %}
