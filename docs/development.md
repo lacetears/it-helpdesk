@@ -1,9 +1,6 @@
-# Development notes
+# Development
 
-The code and test results are inspectable in this repository. This is a learning/portfolio project, not client work or employment experience. No prior development history or production outcomes are claimed.
+Use a virtual environment and install `requirements.txt`. Run `python -m pytest -q` from the repository root. CI uses Python 3.12 and 3.13. Tests create temporary databases/files where they mutate data; committed datasets are explicit regression fixtures.
 
-## Validation
-Run the commands in the README. Tests exercise behavior rather than serving as evidence of production readiness. Fixtures and datasets are synthetic.
+Keep changes small and include a failing example before fixing a bug. Verify documented commands from a clean checkout. Do not describe browser mockups as deployed Python services. The root README is the maintained setup reference; nested guides retain additional context and may describe the original exercise.
 
-## Working on this project
-Make changes in a branch, add a regression test for changed behavior, run the checks, and explain the change in a commit. Keep real credentials and customer data out of the repository.
