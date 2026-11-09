@@ -1,16 +1,15 @@
 # IT Help Desk
 
-[Live browser demo](https://lacetears.github.io/it-career-portfolio/helpdesk.html)
+A local support queue for recording requests, assigning work, and preserving investigation notes. Built with Python, Flask, SQLite, and server-rendered HTML/CSS.
 
-A local ticket tracker for a support technician: capture a request, set its priority, assign an owner, and follow it through resolution.
+## Support workflow
 
-**Python · Flask · SQLite · HTML/CSS**
+Create a ticket with a requester, description, priority and category (General, Hardware, Software, Network, Access). Assign it, move it between Open, In progress and Resolved, and record work notes. Reopening is allowed. Search by title, description or requester; combine status, priority, category and exact-assignee filters. The queue displays 25 tickets per page and preserves filters across pages. Status totals describe the entire queue, not just the filtered slice.
 
-![Published browser demo](docs/screenshot.jpg)
+## Run locally
 
-*Screenshot of the published interactive demo.*
+Python 3.12 or 3.13:
 
-## Try it
 ```sh
 python -m venv .venv
 # macOS/Linux: source .venv/bin/activate
@@ -19,30 +18,40 @@ python -m pip install -r requirements.txt
 python helpdesk/seed.py
 python helpdesk/app.py
 ```
-Open http://127.0.0.1:5000. The seed command adds three example tickets only if the database is empty.
 
-## A two-minute walkthrough
-1. Create a ticket for an intermittent VPN connection. Set priority to High.
-2. Assign it to a technician and change the status to In progress.
-3. Add a resolution note, then mark the request Resolved.
-4. Search for VPN in the queue and filter to Resolved.
-5. Open the ticket to review the recorded changes.
+Open http://127.0.0.1:5000. Seeding preserves existing tickets. All seed records are fictional.
+Optional `HELPDESK_DATABASE` sets the SQLite path; its parent directory must exist.
+`SECRET_KEY` can persist sessions across restarts. Without it a random key is created at startup.
 
-## What works
-Ticket creation, assignment, four priority levels, three statuses, search, status filters, timestamped history, and persistent SQLite storage. Forms validate input on the server. SQL uses bound parameters, HTML templates escape user content, and state changes require CSRF tokens.
+## Architecture and decisions
 
-## How it is put together
-`helpdesk/app.py` owns the routes and database access. Templates are in `helpdesk/templates`; CSS is in `helpdesk/static`. A fresh database is created on startup. Updates and history entries commit together. Tests use a temporary database so they do not alter demo tickets.
+`helpdesk/app.py` exposes an application factory, request-scoped connections, parameterized SQL and route handlers. Jinja templates escape ticket content. Ticket mutations and their history records commit together. The small codebase deliberately keeps routes together; a service/repository split becomes worthwhile when authentication or integrations introduce more business logic.
 
-SQLite keeps the project easy to run and inspect. Server-rendered pages keep the request flow simple. This version intentionally targets one local operator; authentication and multiple permission levels would be the next architectural change.
+Startup performs an additive category migration and creates queue/history indexes. Existing records default to General. Foreign keys protect new databases; triggers also protect legacy history relationships without rebuilding tables or deleting data. Existing historical orphans, if any, are not silently removed.
 
-## Test
+A per-session CSRF token protects forms. Responses include a restrictive content security policy and MIME-sniffing protection. Field sizes, enum values and request-body size are checked server-side; validation errors render a readable page. Use the browser Back button to recover entered form values after an error.
+
+## Walkthrough
+
+1. Create “VPN disconnects during calls,” category Network, priority High.
+2. Assign Alex, set In progress, and record checks performed.
+3. Add a resolution note and mark Resolved.
+4. Filter by Network, Resolved and Alex, then inspect the history.
+
+## Verification
+
 ```sh
 python -m pytest -q
 ```
-The suite covers the ticket lifecycle, notes, persistence, input validation, CSRF, escaping, search, and missing tickets.
 
-## Limits
-This application has no login, authorization, email delivery, or SLA engine. Run it on localhost; do not deploy it publicly as a help desk for real users. It has not been load-tested. All seeded tickets are fictional.
+Tests cover lifecycle, persistent storage, additive legacy migration, invalid fields, Unicode CSRF input, XSS escaping, parameterized search, categories, assignment, pagination, notes, missing records, security headers and body limits. CI runs Python 3.12 and 3.13.
 
-[Development notes](docs/development.md) · [Detailed setup](helpdesk/README.md)
+## Demo and deployment boundary
+
+[Earlier browser-only demo](https://lacetears.github.io/it-career-portfolio/helpdesk.html) uses browser storage, not Flask or SQLite. Its [existing screenshot](docs/screenshot.jpg) illustrates that separate demo and does not show every feature on this branch.
+
+This is a **single-operator localhost lab**, not a production service. There is no login, authorization, verified actor identity, SLA engine or notification delivery. History is an operational record, not a tamper-proof audit log. Concurrent edits are last-write-wins. Flask's development server is used only on localhost. Public hosting requires authentication/authorization, HTTPS, stable secret management, secure cookies, a production WSGI server, backups and a deployment review. No deployment or load-test claim is made.
+
+## Next engineering steps
+
+Add authenticated roles, conflict detection for concurrent edits, structured resolution fields and tested backup/restore procedures before expanding deployment. See [security notes](SECURITY.md).
