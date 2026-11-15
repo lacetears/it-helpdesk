@@ -124,7 +124,8 @@ def create_app(config=None):
         total = db().execute("SELECT COUNT(*) FROM (" + sql + ")", args).fetchone()[0]
         rows = db().execute(sql + " ORDER BY id DESC LIMIT 25 OFFSET ?", args + [(page - 1) * 25]).fetchall()
         def page_url(number):
-            query = request.args.to_dict()
+            # Only application filters belong in pagination links.
+            query = dict(q=q, status=status, assignee=assignee, **filters)
             query["page"] = number
             return url_for("index", **query)
         counts = {

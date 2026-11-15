@@ -172,3 +172,11 @@ def test_security_headers_and_size_limit(client):
     assert response.headers['X-Content-Type-Options']=='nosniff'
     assert "frame-ancestors 'none'" in response.headers['Content-Security-Policy']
     assert client.post('/tickets',data={'description':'x'*40000}).status_code==413
+
+
+def test_unknown_query_keys_cannot_control_pagination(client):
+    response = client.get('/?page=2&endpoint=detail&_external=1&_anchor=bad&q=printer')
+    assert response.status_code == 200
+    assert b'endpoint=' not in response.data
+    assert b'_external=' not in response.data
+    assert b'q=printer' in response.data
